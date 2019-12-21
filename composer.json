@@ -1,0 +1,32 @@
+{
+    "name": "maraful/query-summary",
+    "description": "Query summary in Laravel Debugbar",
+    "type": "package",
+    "require": {
+        "barryvdh/laravel-debugbar": "^3.2"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpunit/phpunit": "^8.5"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Chris Anstey",
+            "email": "git@cpanstey.co.uk"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Maraful\\QuerySummary\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Maraful\\QuerySummary\\ServiceProvider"
+            ]
+
+        }
+    }
+}
