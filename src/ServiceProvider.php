@@ -1,6 +1,8 @@
 <?php
 namespace Maraful\QuerySummary;
 
+use Debugbar;
+
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     /**
@@ -20,6 +22,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
+        Debugbar::addCollector(new QuerySummary());
 
     }
 }
