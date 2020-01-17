@@ -31,8 +31,8 @@ class QuerySummary extends DataCollector implements DataCollectorInterface, Rend
         $statements = collect($queryData['statements']);
 
         // produce a collection of unique queries, with the count of how many times each occurred
-        $counted = $statements->countBy(function ($statement) {
-            return $statement['sql'];
+        $counted = $statements->groupBy('sql')->map(function ($items) {
+            return count($items);
         });
 
         // loop through the unique queries, producing the output data (total calls, query time etc)
