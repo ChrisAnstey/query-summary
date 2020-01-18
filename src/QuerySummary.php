@@ -48,6 +48,7 @@ class QuerySummary extends QueryCollector implements DataCollectorInterface, Ren
             $firstExample['duration'] = $filtered->sum('time');
             $firstExample['count'] = $countedVal;
             $firstExample['backtrace'] = array_values($firstExample['source']);
+            $firstExample['stmt_id'] = $this->getDataFormatter()->formatSource(reset($firstExample['source']));
 
             return $firstExample;
         });
