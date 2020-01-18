@@ -47,6 +47,7 @@ class QuerySummary extends QueryCollector implements DataCollectorInterface, Ren
             $firstExample['duration_str'] = $this->formatDuration($filtered->sum('time'));
             $firstExample['duration'] = $filtered->sum('time');
             $firstExample['count'] = $countedVal;
+            $firstExample['backtrace'] = array_values($firstExample['source']);
 
             return $firstExample;
         });
@@ -85,5 +86,26 @@ class QuerySummary extends QueryCollector implements DataCollectorInterface, Ren
                 "default" => 0
             ]
         ];
+    }
+
+    /**
+     * Check if the given file is to be excluded from analysis
+     *
+     * @param string $file
+     * @return bool
+     */
+    protected function fileIsInExcludedPath($file)
+    {
+        // first check it's not excluded by parent class
+        if (parent::fileIsInExcludedPath($file)) {
+            return true;
+        }
+
+        // not excluded already, so check it's not our package code
+
+        $excludedPath = '/maraful/query-summary/src/ServiceProvider';
+        $normalizedPath = str_replace('\\', '/', $file);
+
+        return (strpos($normalizedPath, $excludedPath) !== false);
     }
 }

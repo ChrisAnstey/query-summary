@@ -31,6 +31,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         // explicitly disable render with params, as we want to group similar queries
         $collector->setRenderSqlWithParams(false);
 
+        // enable find source, so we can group queries properly
+        $middleware = $this->app['router']->getMiddleware();
+        $collector->setFindSource(true, $middleware);
+
         $db = $this->app['db'];
 
         try {
