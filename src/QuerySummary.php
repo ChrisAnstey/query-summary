@@ -3,15 +3,15 @@ namespace Maraful\QuerySummary;
 
 use Debugbar;
 use DebugBar\DataCollector\DataCollectorInterface;
-use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
+use Barryvdh\Debugbar\DataCollector\QueryCollector;
 
 /**
  * Provides summary of queries, grouped by uniques queries for Laravel DebugBar.
  *
- * "DataCollector" but, actually just uses the data from queries collector.
+ * Uses own listener to capture db queries.
  */
-class QuerySummary extends DataCollector implements DataCollectorInterface, Renderable
+class QuerySummary extends QueryCollector implements DataCollectorInterface, Renderable
 {
 
     /**
@@ -26,12 +26,10 @@ class QuerySummary extends DataCollector implements DataCollectorInterface, Rend
      */
     public function collect()
     {
-        $queryData = Debugbar::getCollector('queries')->collect();
-
-        $statements = collect($queryData['statements']);
+        $statements = collect($this->queries);
 
         // produce a collection of unique queries, with the count of how many times each occurred
-        $counted = $statements->groupBy('sql')->map(function ($items) {
+        $counted = $statements->groupBy('query')->map(function ($items) {
             return count($items);
         });
 
@@ -40,14 +38,14 @@ class QuerySummary extends DataCollector implements DataCollectorInterface, Rend
 
             // get a full collection of the queries that match the current unique one
             $filtered = $statements->filter(function ($value) use ($countedKey) {
-                return $value['sql'] == $countedKey;
+                return $value['query'] == $countedKey;
             });
 
             // use the first one, and add the summary details
             $firstExample = $filtered->first();
-            $firstExample['sql'] = sprintf('%sx ', $countedVal) . $firstExample['sql'];
-            $firstExample['duration_str'] = $this->formatDuration($filtered->sum('duration'));
-            $firstExample['duration'] = $filtered->sum('duration');
+            $firstExample['sql'] = sprintf('%sx ', $countedVal) . $firstExample['query'];
+            $firstExample['duration_str'] = $this->formatDuration($filtered->sum('time'));
+            $firstExample['duration'] = $filtered->sum('time');
             $firstExample['count'] = $countedVal;
 
             return $firstExample;
@@ -56,9 +54,16 @@ class QuerySummary extends DataCollector implements DataCollectorInterface, Rend
         // for now, always sort by total time descending (allow config in future(?))
         $counted = $counted->sortByDesc('duration');
 
+        $totalTime = $counted->sum('duration');
+
         // populate data used by js
-        $queryData['statements'] = $counted->values()->toArray();
-        $queryData['nb_statements'] = $counted->count();
+        $queryData = [
+            'nb_statements' => $counted->count(),
+            'nb_failed_statements' => 0,
+            'accumulated_duration' => $totalTime,
+            'accumulated_duration_str' => $this->formatDuration($totalTime),
+            'statements' => $counted->values()->toArray(),
+        ];
 
         return $queryData;
     }
