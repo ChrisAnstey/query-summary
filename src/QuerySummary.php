@@ -87,7 +87,7 @@ class QuerySummary extends QueryCollector implements DataCollectorInterface, Ren
         return [
             "querysummary" => [
                 "icon" => "database",
-                "widget" => "PhpDebugBar.Widgets.LaravelSQLQueriesWidget",
+                "widget" => "PhpDebugBar.Widgets.LaravelSQLQuerySummaryWidget",
                 "map" => "querysummary",
                 "default" => "[]"
             ],

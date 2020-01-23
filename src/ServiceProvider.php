@@ -57,5 +57,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         }
 
         Debugbar::addCollector($collector);
+        Debugbar::getJavascriptRenderer()->addAssets([], [__DIR__ . '/Resources/widget.js']);
     }
 }
