@@ -46,7 +46,7 @@ class QuerySummary extends QueryCollector implements DataCollectorInterface, Ren
             $subGrouped = $group->groupBy(function($item) {
                 $key = '';
                 foreach ($item['source'] as $source) {
-                    $key .= $source->name . " ln" . $source->line . "<br />";
+                    $key .= $source->name . $source->line;
                 }
                 return $key;
             })->map(function ($items) {
