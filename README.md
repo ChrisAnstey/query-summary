@@ -1,10 +1,13 @@
-# Query-summary
+## Query-summary
+[![Latest Stable Version](https://poser.pugx.org/maraful/query-summary/v/stable)](https://packagist.org/packages/maraful/query-summary)
+[![License](https://poser.pugx.org/maraful/query-summary/license)](https://packagist.org/packages/maraful/query-summary)
+
 Provides a query summary in laravel-debugbar. For situations where you have many queries being made, and you need the raw queries summarised into a list of unique queries, the number of times they ran, and the total query time. Eg: 
 
 ![screenshot](https://user-images.githubusercontent.com/1218573/72647128-ade76e80-396f-11ea-8e58-8ebba144dd42.png)
 
 
-## Installation
+### Installation
 
 Install the package with composer. It is recommended to only require the package in development.
 
