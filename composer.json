@@ -26,7 +26,6 @@
             "providers": [
                 "Maraful\\QuerySummary\\ServiceProvider"
             ]
-
         }
     }
 }

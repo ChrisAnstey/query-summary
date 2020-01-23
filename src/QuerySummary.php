@@ -42,6 +42,22 @@ class QuerySummary extends QueryCollector implements DataCollectorInterface, Ren
             $firstExample['count'] = $group->count();
             $firstExample['backtrace'] = array_values($firstExample['source']);
             $firstExample['stmt_id'] = $this->getDataFormatter()->formatSource(reset($firstExample['source']));
+            // create subgroup by the source of the query in the code
+            $subGrouped = $group->groupBy(function($item) {
+                $key = '';
+                foreach ($item['source'] as $source) {
+                    $key .= $source->name . $source->line;
+                }
+                return $key;
+            })->map(function ($items) {
+                return [
+                    'count' => count($items),
+                    'source' => $items->first()['source'],
+                    'duration' => $items->sum('time'),
+                    'duration_str' => $this->formatDuration($items->sum('time')),
+                ];
+            });
+            $firstExample['subCount'] = $subGrouped->toArray();
 
             return $firstExample;
         });
@@ -71,7 +87,7 @@ class QuerySummary extends QueryCollector implements DataCollectorInterface, Ren
         return [
             "querysummary" => [
                 "icon" => "database",
-                "widget" => "PhpDebugBar.Widgets.LaravelSQLQueriesWidget",
+                "widget" => "PhpDebugBar.Widgets.LaravelSQLQuerySummaryWidget",
                 "map" => "querysummary",
                 "default" => "[]"
             ],
