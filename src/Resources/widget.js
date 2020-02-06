@@ -1,5 +1,7 @@
 (function ($) {
 
+    var csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
+
     // A customised widget to tweak some output from default Query Widget
     var LaravelSQLQuerySummaryWidget = PhpDebugBar.Widgets.LaravelSQLQuerySummaryWidget = PhpDebugBar.Widgets.LaravelSQLQueriesWidget.extend({
         tagName: 'div',
@@ -29,16 +31,23 @@
                         subGroup = $('<tr />')
                             .append($('<td />').html(subItem[1].count))
                             .append($('<td />').html(subItem[1].duration_str))
+
                         // create cell for source backtrace
-                        subGroupSource = $('<td />')
-                        $(Object.entries(subItem[1].source )).each(function (i, subItemSourceLine) {
-                            subGroupSource.append($('<div />').html(subItemSourceLine[1].name + ': ' + subItemSourceLine[1].line))
-                        })
-                        tableBody.append(subGroup.append(subGroupSource));
+                        var $span = $('<span />').addClass('phpdebugbar-text-muted');
+                        var $bindings = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, binding) {
+                            var $index = $span.clone().text(binding[1].index + '.');
+                            li.append($index, '&nbsp;', binding[1].name).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
+                            li.append($span.clone().text(':' + binding[1].line));
+
+                        }});
+
+                        $bindings.set('data', Object.entries(subItem[1].source));
+                        $bindings.$el.removeClass(csscls('list')).addClass(csscls('table-list'));
+
+                        tableBody.append(subGroup.append($('<td />').append($bindings.$el)));
                     })
                 });
             });
         },
-
     });
 })(PhpDebugBar.$);
